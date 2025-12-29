@@ -1,30 +1,101 @@
-function calculateGrade() {
-    // Collecting marks for 5 subjects using prompt()
-    let subject1 = Number(prompt("Enter marks for Subject 1 out of 100 :"));
-    let subject2 = Number(prompt("Enter marks for Subject 2 out of 100 :"));
-    let subject3 = Number(prompt("Enter marks for Subject 3 out of 100 :"));
-    let subject4 = Number(prompt("Enter marks for Subject 4 out of 100 :"));
-    let subject5 = Number(prompt("Enter marks for Subject 5 out of 100 :"));
+let display = document.getElementById('display');
+        let operationDisplay = document.getElementById('operation');
+        let firstOperand = null;
+        let operator = null;
+        let waitingForSecond = false;
 
-    // Calculate total and average
-    let totalMarks = subject1 + subject2 + subject3 + subject4 + subject5;
-    let averageMarks = totalMarks / 5;
+        function inputDigit(digit) {
+            if (waitingForSecond) {
+                display.value = digit;
+                waitingForSecond = false;
+            } else {
+                display.value = display.value === '0' ? digit : display.value + digit;
+            }
+        }
 
-    // Determine the grade using if-else statements
-    let grade;
-    if (averageMarks >= 90) {
-        grade = "A+";
-    } else if (averageMarks >= 80) {
-        grade = "A";
-    } else if (averageMarks >= 70) {
-        grade = "B";
-    } else if (averageMarks >= 60) {
-        grade = "C";
-    } else if (averageMarks >= 50) {
-        grade = "D";
-    } else {
-        grade = "F";
-    }
+        function inputDecimal() {
+            if (waitingForSecond) {
+                display.value = '0.';
+                waitingForSecond = false;
+            } else if (display.value.indexOf('.') === -1) {
+                display.value += '.';
+            }
+        }
 
-    alert(`Total Marks: ${totalMarks} \n Average Marks: ${averageMarks} \n Grade: ${grade}`);
-}
+        function clearDisplay() {
+            display.value = '0';
+            firstOperand = null;
+            operator = null;
+            waitingForSecond = false;
+            operationDisplay.textContent = '';
+        }
+
+        function setOperator(op) {
+            const inputValue = parseFloat(display.value);
+
+            if (firstOperand === null) {
+                firstOperand = inputValue;
+            } else if (operator) {
+                const result = performCalculation(firstOperand, inputValue, operator);
+                display.value = result;
+                firstOperand = result;
+            }
+
+            waitingForSecond = true;
+            operator = op;
+            
+            let opSymbol = op;
+            if (op === '*') opSymbol = '×';
+            if (op === '/') opSymbol = '÷';
+            if (op === '-') opSymbol = '−';
+            
+            operationDisplay.textContent = firstOperand + ' ' + opSymbol;
+        }
+
+        function performCalculation(first, second, op) {
+            switch (op) {
+                case '+':
+                    return first + second;
+                case '-':
+                    return first - second;
+                case '*':
+                    return first * second;
+                case '/':
+                    return second !== 0 ? first / second : 'Error';
+                default:
+                    return second;
+            }
+        }
+
+        function calculate() {
+            const inputValue = parseFloat(display.value);
+            
+            if (firstOperand !== null && operator) {
+                const result = performCalculation(firstOperand, inputValue, operator);
+                display.value = result;
+                operationDisplay.textContent = '';
+                firstOperand = null;
+                operator = null;
+                waitingForSecond = true;
+            }
+        }
+
+        function calculateSquare() {
+            const value = parseFloat(display.value);
+            const result = value * value;
+            display.value = result;
+            operationDisplay.textContent = '';
+            firstOperand = null;
+            operator = null;
+            waitingForSecond = true;
+        }
+
+        function calculateCube() {
+            const value = parseFloat(display.value);
+            const result = value * value * value;
+            display.value = result;
+            operationDisplay.textContent = '';
+            firstOperand = null;
+            operator = null;
+            waitingForSecond = true;
+        }
